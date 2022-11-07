@@ -102,19 +102,37 @@ class Count_SVI:
         #self.D = torch.tensor([[0.0200]])
         #self.L = torch.tensor([[0.0800]])
         #self.B = torch.zeros((d, Q))
-        self.mu = torch.randn((self.d, ), dtype=self.dtype, requires_grad=True)
-        self.L = torch.randn((self.d, self.K), dtype=self.dtype, requires_grad=True)
-        self.D = diag(torch.rand(self.d, dtype=self.dtype)).requires_grad_(True)
-        self.B = torch.randn((self.d, self.Q), dtype=self.dtype, requires_grad=True)
+        self.mu = torch.tensor([0.84674305])
+        self.L = torch.tensor([[-0.6733677]])
+        self.B = torch.tensor([[-0.09026227]])
+        self.D = torch.tensor([[0.4880225]])
+        self.mu.requires_grad = True
+        self.L.requires_grad = True
+        self.D.requires_grad = True
+        self.B.requires_grad = True
+        #self.mu = torch.randn((self.d, ), dtype=self.dtype, requires_grad=True)
+        #self.L = torch.randn((self.d, self.K), dtype=self.dtype, requires_grad=True)
+        #self.D = diag(torch.rand(self.d, dtype=self.dtype)).requires_grad_(True)
+        #self.B = torch.randn((self.d, self.Q), dtype=self.dtype, requires_grad=True)
         self.L_t = torch.t(self.L)
         self.sigma = (self.L @ self.L_t + self.D)
         assert det(self.sigma) > 0, "The covariance matrix is not positive definite"
         self.sigma_inv = torch.inverse(self.sigma)
         self.A = torch.linalg.cholesky(self.sigma)
-        self.phi_1 = torch.randn((self.d, ), dtype=self.dtype, requires_grad=True) # phi_1 is a dx1 matrix
-        self.phi_2 = torch.randn((self.d, ), dtype=self.dtype, requires_grad=True) # phi_2 is a dx1 matrix
-        self.phi_3 = torch.randn((self.d, ), dtype=self.dtype, requires_grad=True) # phi_3 is a dx1 matrix
-        self.phi_4 = torch.randn((self.d, ), dtype=self.dtype, requires_grad=True) # phi_4 is a dx1 matrix
+        self.phi_1 = torch.tensor([-0.60344166])
+        self.phi_2 = torch.tensor([0.05543555])
+        self.phi_3 = torch.tensor([-3.9669275])
+        self.phi_4 = torch.tensor([2.9455209])
+        
+        self.phi_1.requires_grad = True
+        self.phi_2.requires_grad = True
+        self.phi_3.requires_grad = True
+        self.phi_4.requires_grad = True
+        
+        #self.phi_1 = torch.randn((self.d, ), dtype=self.dtype, requires_grad=True) # phi_1 is a dx1 matrix
+        #self.phi_2 = torch.randn((self.d, ), dtype=self.dtype, requires_grad=True) # phi_2 is a dx1 matrix
+        #self.phi_3 = torch.randn((self.d, ), dtype=self.dtype, requires_grad=True) # phi_3 is a dx1 matrix
+        #self.phi_4 = torch.randn((self.d, ), dtype=self.dtype, requires_grad=True) # phi_4 is a dx1 matrix
         self.elbo = torch.zeros(1, dtype=self.dtype)
 
     def set_train(self, batch_size=100, max_iter=1000, learning_rate=0.001) -> None:
@@ -503,6 +521,6 @@ if __name__ == '__main__':
     model = Count_SVI()
     model.generate_data(N, Q, d, K, X, mu, L, D, B)
     model.initialize_params()
-    model.set_train(batch_size=100, max_iter=500, learning_rate=0.01)
+    model.set_train(batch_size=100, max_iter=500, learning_rate=0.1)
     model.train()
 
